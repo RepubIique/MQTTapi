@@ -52,7 +52,7 @@ vendingdb.login = bodyJson => {
   const { username, password } = bodyJson;
   return new Promise((resolve, reject) => {
     pool.query(
-      `SELECT username, email, first_name, last_name FROM users WHERE username = ? AND password = ?;`,
+      `SELECT * FROM users WHERE username = ? AND password = ?;`,
       [username, password],
       (err, results) => {
         if (err) {
