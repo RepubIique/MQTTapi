@@ -40,6 +40,17 @@ router.post('/login/', async(req, res)=>{
     }
 })
 
+router.get('/listproducts', async(req, res)=>{
+    try{
+        let results = await db.getAllProducts();
+        res.json(results);
+    }catch(e){
+        console.log(e);
+        res.sendStatus(500);
+    }
+})
+
+
 
 const isEmpty = (obj) =>{
     for(var key in obj) {
