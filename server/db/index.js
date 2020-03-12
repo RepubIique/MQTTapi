@@ -88,10 +88,32 @@ vendingdb.storeOrder = bodyJson => {
         if (err) {
           return reject(err);
         }
-        return resolve(results[0] ? results[0] : {});
+        return resolve(results[0] || {});
       }
     );
   });
 };
+
+vendingdb.getOrderHistory = bodyJson => {
+  console.log(bodyJson)
+  return new Promise((resolve, reject) => {
+    pool.query(
+      `SELECT u.id as user_id, o.id as order_id, u.first_name, u.last_name, u.email,
+      p.id, p.name as product_name, p.price, o.total_amount
+      FROM orders o
+         LEFT JOIN order_products op ON o.id = op.order_id
+         LEFT JOIN products p ON op.product_id = p.id
+         LEFT JOIN users u ON o.user_id = u.id
+     WHERE u.id = ${bodyJson.id};`,
+      (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(results);
+      }
+    );
+  });
+};
+
 
 module.exports = vendingdb;
