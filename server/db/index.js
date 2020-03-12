@@ -79,4 +79,19 @@ vendingdb.getAllProducts = bodyJson => {
 };
 
 
+vendingdb.storeOrder = bodyJson => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      `CALL storeOrder(?);`,
+      [JSON.stringify(bodyJson)],
+      (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(results[0] ? results[0] : {});
+      }
+    );
+  });
+};
+
 module.exports = vendingdb;
