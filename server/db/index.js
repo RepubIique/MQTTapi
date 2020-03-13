@@ -1,7 +1,14 @@
 var mysql = require("mysql");
 var constants = require("../constants");
 
-const pool = mysql.createPool(constants.params.JAWSDB_URL);
+const pool = mysql.createPool({
+    connectionLimit: 20,
+    host: 'm7nj9dclezfq7ax1.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
+    user: 'w0nuxbbxnehk7p79',
+    password: 'pvdwa47jlsoreexn',
+    database: 'vezqll2t58c0700v',
+    multipleStatements: true
+});
 
 let vendingdb = {};
 
@@ -95,7 +102,6 @@ vendingdb.storeOrder = bodyJson => {
 };
 
 vendingdb.getOrderHistory = bodyJson => {
-  console.log(bodyJson)
   return new Promise((resolve, reject) => {
     pool.query(
       `SELECT u.id as user_id, o.id as order_id, u.first_name, u.last_name, u.email,
@@ -104,16 +110,38 @@ vendingdb.getOrderHistory = bodyJson => {
          LEFT JOIN order_products op ON o.id = op.order_id
          LEFT JOIN products p ON op.product_id = p.id
          LEFT JOIN users u ON o.user_id = u.id
-     WHERE u.id = ${bodyJson.id};`,
+     WHERE u.id = ${bodyJson.id};
+     SELECT * FROM orders WHERE user_id = ${bodyJson.id};`,
       (err, results) => {
         if (err) {
           return reject(err);
         }
-        return resolve(results);
+        return resolve(orderHistoryPostProcess(results));
       }
     );
   });
 };
+
+
+const orderHistoryPostProcess = (data) => {
+  const orders = data[1]
+  const order_products = data[0]
+  let results = []
+  let orders_array = []
+  orders.forEach(x => {
+    let order_id = x.id
+    orders_array = []
+    order_products.forEach(y => {
+      if(y.order_id === order_id){
+        orders_array.push(y)
+      }
+    })
+    results.push(orders_array)
+  })
+  return results
+}
+
+module.exports = vendingdb;
 
 
 module.exports = vendingdb;

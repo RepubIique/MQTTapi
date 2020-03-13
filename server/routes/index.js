@@ -63,7 +63,6 @@ router.post("/storeorder", async (req, res) => {
 router.post("/getorders/", async (req, res) => {
   try {
     let results = await db.getOrderHistory(req.body);
-    console.log('Results',results)
     if (results) res.json({ msg: "Order history retrieved", results });
     else res.json({ msg: "Unable to get order history", results });
   } catch (e) {
