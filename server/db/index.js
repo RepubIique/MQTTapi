@@ -105,7 +105,7 @@ vendingdb.getOrderHistory = bodyJson => {
   return new Promise((resolve, reject) => {
     pool.query(
       `SELECT u.id as user_id, o.id as order_id, u.first_name, u.last_name, u.email,
-      p.id, p.name as product_name, p.image_url as image_url, p.price, o.total_amount
+      p.id, p.name as product_name, p.image_url as image_url, p.price, o.total_amount, o.created_on
       FROM orders o
          LEFT JOIN order_products op ON o.id = op.order_id
          LEFT JOIN products p ON op.product_id = p.id
